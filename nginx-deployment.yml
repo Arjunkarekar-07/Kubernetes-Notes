@@ -4,6 +4,7 @@ metadata:
   name: nginx-deployment-arjun
   labels:
     app: nginx
+    name: test-nginx
 spec:
   replicas: 4
   selector:
