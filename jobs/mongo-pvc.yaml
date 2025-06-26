@@ -1,0 +1,12 @@
+# mongodump-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodump          # ← must match the claimName in the Job
+spec:
+  storageClassName: standard   # use your cluster’s StorageClass (gp2, managed-csi, etc.)
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

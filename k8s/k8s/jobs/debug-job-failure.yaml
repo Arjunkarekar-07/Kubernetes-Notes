@@ -1,0 +1,33 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mongodb-backup-debug
+spec:
+  backoffLimit: 6
+  ttlSecondsAfterFinished: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: dump
+        image: mongo:4.2
+        command: ["/bin/sh", "-c"]
+        args:
+          - >
+            set -x &&
+            mongodump --uri "mongodb://test:${MONGO_PASSWORD}@mongo-0.mongo.default.svc.cluster.local:27017,mongo-1.mongo.default.svc.cluster.local:27017,mongo-2.mongo.default.svc.cluster.local:27017/?replicaSet=rs0&readPreference=secondaryPreferred&authSource=admin" 
+            --out "/usr/share/mongodump/$(date +%d%m%Y-%H%M%S)"
+        env:
+        - name: MONGO_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: password
+        volumeMounts:
+        - name: mongodump
+          mountPath: /usr/share/mongodump
+      volumes:
+      - name: mongodump
+        persistentVolumeClaim:
+          claimName: mongodump
+

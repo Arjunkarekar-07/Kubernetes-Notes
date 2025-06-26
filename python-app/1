@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-deployment
+  labels:
+    app: django-python-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: django-python-app
+  template:
+    metadata:
+      labels:
+        app: django-python-app
+    spec:
+      containers:
+        - name: python-app
+          image: arjunkarekar/python-django-app:latest
+          volumeMounts:
+             - name: db-password
+               mountPath: /opt
+          ports:
+            - containerPort: 8000
+      volumes:
+        - name: db-password
+          secret:
+             secretName: dotfile-secret
